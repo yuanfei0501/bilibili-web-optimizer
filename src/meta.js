@@ -1,13 +1,14 @@
 export const userscriptMeta = `// ==UserScript==
 // @name         B站 Web 优化
-// @namespace    https://github.com/bilibili-web-optimizer
+// @name:en      Bilibili Web Optimizer
+// @namespace    https://github.com/yuanfei0501/bilibili-web-optimizer
 // @version      0.1.0
-// @description  净化 B站 web 端页面体验
-// @author       You
+// @description  净化 B站 web 端页面体验 - 隐藏广告、推广、简化界面，可視化配置
+// @description:en  Clean up Bilibili web experience - hide ads, promotions, simplify UI with visual config
+// @author       yuanfei0501
 // @match        *://www.bilibili.com/*
 // @match        *://search.bilibili.com/*
 // @match        *://space.bilibili.com/*
-// @match        *://t.bilibili.com/*
 // @match        *://t.bilibili.com/*
 // @grant        GM_setValue
 // @grant        GM_getValue
@@ -15,5 +16,9 @@ export const userscriptMeta = `// ==UserScript==
 // @grant        GM_addStyle
 // @run-at       document-start
 // @license      MIT
+// @homepageURL  https://github.com/yuanfei0501/bilibili-web-optimizer
+// @supportURL   https://github.com/yuanfei0501/bilibili-web-optimizer/issues
+// @updateURL    https://raw.githubusercontent.com/yuanfei0501/bilibili-web-optimizer/main/dist/bilibili-web-optimizer.user.js
+// @contributionURL https://github.com/yuanfei0501/bilibili-web-optimizer
 // ==/UserScript==
 `;
