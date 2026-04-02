@@ -3,12 +3,15 @@ import { removeElements } from '../utils/dom.js';
 import { log } from '../utils/logger.js';
 
 const homeCss = `
-  .bili-banner__ad,
-  .header-banner__wrap,
-  .bili-header__banner[data-report="banner"] {
+  /* 顶部横幅广告 */
+  .bili-header__banner,
+  #bili-header-banner-img,
+  .header-banner__inner,
+  .animated-banner {
     display: none !important;
   }
 
+  /* 推荐信息流中的广告/推广 */
   .feed-card:has(.bili-video-card__info--ad),
   .bili-video-card:has(.bili-video-card__info--ad),
   .feed-card:has([class*="sponsor"]),
@@ -17,6 +20,7 @@ const homeCss = `
     display: none !important;
   }
 
+  /* 侧边栏活动浮窗 */
   .activity-m,
   .bili-dyn-sidebar,
   .sidebar-wrap .side-bar__item[data-module="activity"] {
