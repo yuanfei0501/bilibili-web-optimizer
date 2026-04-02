@@ -3,12 +3,19 @@ import { removeElements } from '../utils/dom.js';
 import { log } from '../utils/logger.js';
 
 const homeCss = `
-  /* 首页推荐信息流轮播广告 */
+  /* 隐藏轮播广告 */
   .recommended-swipe,
-  .recommended-swipe[data-loc-id],
-  .carousel-item[href*="cm.bilibili.com"],
-  .carousel-item:has(img.icon[src*="eva.png"]) {
+  .recommended-swipe[data-loc-id] {
     display: none !important;
+  }
+
+  /* 修复隐藏轮播后 grid 布局错位：重置所有卡片为自动排列 */
+  .container.is-version8 > .feed-card,
+  .container.is-version8 > .floor-single-card,
+  .container.is-version8 > .bili-video-card,
+  .container.is-version8 > .load-more-anchor {
+    grid-column: auto !important;
+    grid-row: auto !important;
   }
 
   /* 推荐信息流中的广告/推广 */
