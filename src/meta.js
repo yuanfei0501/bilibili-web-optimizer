@@ -7,6 +7,8 @@ export const userscriptMeta = `// ==UserScript==
 // @match        *://www.bilibili.com/*
 // @match        *://search.bilibili.com/*
 // @match        *://space.bilibili.com/*
+// @match        *://t.bilibili.com/*
+// @match        *://t.bilibili.com/*
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_registerMenuCommand

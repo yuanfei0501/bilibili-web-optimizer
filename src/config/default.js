@@ -26,6 +26,9 @@ const defaults = {
     filterBangumi: { value: false, name: '过滤番剧结果', desc: '隐藏搜索中的番剧类型' },
     filterUser: { value: false, name: '过滤用户结果', desc: '隐藏搜索中的用户类型' },
   },
+  dynamic: {
+    widenContent: { value: true, name: '动态页加宽', desc: '加宽动态页主内容区域' },
+  },
 };
 
 export default defaults;

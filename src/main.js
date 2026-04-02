@@ -6,6 +6,7 @@ import { initHomePage } from './pages/home.js';
 import { initVideoPage } from './pages/video.js';
 import { initSpacePage } from './pages/space.js';
 import { initSearchPage } from './pages/search.js';
+import { initDynamicPage } from './pages/dynamic.js';
 import { openPanel } from './panel/index.js';
 
 const ROUTES = [
@@ -13,6 +14,7 @@ const ROUTES = [
   { key: 'video', pattern: /^https?:\/\/www\.bilibili\.com\/video\//, init: initVideoPage },
   { key: 'space', pattern: /^https?:\/\/space\.bilibili\.com\//, init: initSpacePage },
   { key: 'search', pattern: /^https?:\/\/search\.bilibili\.com\//, init: initSearchPage },
+  { key: 'dynamic', pattern: /^https?:\/\/t\.bilibili\.com/, init: initDynamicPage },
 ];
 
 function detectPage() {
