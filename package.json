@@ -1,0 +1,14 @@
+{
+  "name": "bilibili-web-optimizer",
+  "version": "0.1.0",
+  "description": "B站 Web 端页面净化优化工具",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "rollup --config rollup.config.mjs",
+    "dev": "rollup --config rollup.config.mjs --watch"
+  },
+  "devDependencies": {
+    "rollup": "^4.0.0"
+  }
+}
