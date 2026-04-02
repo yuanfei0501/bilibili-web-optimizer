@@ -8,26 +8,28 @@ export const panelCSS = `
     position: fixed;
     top: 0; left: 0;
     width: 100vw; height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
+    background: transparent;
     z-index: 2147483647;
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
   }
 
   .panel {
-    width: 380px;
+    width: 340px;
     max-width: 90vw;
     height: 100vh;
-    background: #1a1a2e;
-    color: #e0e0e0;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: #333;
     display: flex;
     flex-direction: column;
-    box-shadow: -4px 0 20px rgba(0,0,0,0.3);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
     animation: slideIn 0.3s ease;
   }
 
   @keyframes slideIn {
-    from { transform: translateX(100%); }
+    from { transform: translateX(-100%); }
     to { transform: translateX(0); }
   }
 
@@ -36,10 +38,10 @@ export const panelCSS = `
     align-items: center;
     justify-content: space-between;
     padding: 16px 20px;
-    border-bottom: 1px solid #2a2a4a;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     font-size: 16px;
     font-weight: 600;
-    color: #fff;
+    color: #222;
   }
 
   .panel-close {
@@ -51,11 +53,11 @@ export const panelCSS = `
     padding: 4px 8px;
     border-radius: 4px;
   }
-  .panel-close:hover { background: #2a2a4a; color: #fff; }
+  .panel-close:hover { background: rgba(0, 0, 0, 0.06); color: #333; }
 
   .tabs {
     display: flex;
-    border-bottom: 1px solid #2a2a4a;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     overflow-x: auto;
   }
   .tabs::-webkit-scrollbar { display: none; }
@@ -63,13 +65,13 @@ export const panelCSS = `
   .tab {
     padding: 10px 16px;
     font-size: 13px;
-    color: #999;
+    color: #888;
     cursor: pointer;
     border-bottom: 2px solid transparent;
     white-space: nowrap;
     transition: all 0.2s;
   }
-  .tab:hover { color: #e0e0e0; }
+  .tab:hover { color: #333; }
   .tab.active { color: #00a1d6; border-bottom-color: #00a1d6; }
 
   .tab-content {
@@ -78,7 +80,7 @@ export const panelCSS = `
     padding: 16px 20px;
   }
   .tab-content::-webkit-scrollbar { width: 4px; }
-  .tab-content::-webkit-scrollbar-thumb { background: #2a2a4a; border-radius: 2px; }
+  .tab-content::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.08); border-radius: 2px; }
 
   .tab-page { display: none; }
   .tab-page.active { display: block; }
@@ -88,20 +90,20 @@ export const panelCSS = `
     align-items: center;
     justify-content: space-between;
     padding: 12px 0;
-    border-bottom: 1px solid #22223a;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
   }
   .setting-item:last-child { border-bottom: none; }
 
   .setting-info { flex: 1; margin-right: 12px; }
-  .setting-name { font-size: 14px; color: #e0e0e0; margin-bottom: 2px; }
-  .setting-desc { font-size: 12px; color: #777; }
+  .setting-name { font-size: 14px; color: #333; margin-bottom: 2px; }
+  .setting-desc { font-size: 12px; color: #999; }
 
   .toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
   .toggle input { opacity: 0; width: 0; height: 0; }
   .toggle-slider {
     position: absolute; cursor: pointer;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: #3a3a5a; border-radius: 24px; transition: 0.3s;
+    background: #ddd; border-radius: 24px; transition: 0.3s;
   }
   .toggle-slider::before {
     content: "";
@@ -114,14 +116,14 @@ export const panelCSS = `
 
   .panel-footer {
     padding: 16px 20px;
-    border-top: 1px solid #2a2a4a;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
   }
   .btn-reset {
     width: 100%; padding: 10px;
-    background: #2a2a4a; color: #fb7299;
+    background: rgba(0, 0, 0, 0.04); color: #fb7299;
     border: none; border-radius: 8px;
     font-size: 14px; cursor: pointer;
     transition: background 0.2s;
   }
-  .btn-reset:hover { background: #3a3a5a; }
+  .btn-reset:hover { background: rgba(0, 0, 0, 0.08); }
 `;

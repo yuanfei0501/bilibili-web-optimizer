@@ -9,6 +9,7 @@ const TABS = [
   { key: 'video', name: '播放页' },
   { key: 'space', name: '收藏' },
   { key: 'search', name: '搜索' },
+  { key: 'dynamic', name: '动态' },
 ];
 
 let panelHost = null;

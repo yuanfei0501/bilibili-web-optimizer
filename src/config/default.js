@@ -14,6 +14,7 @@ const defaults = {
     hideRecommendAd: { value: true, name: '精简右侧推荐', desc: '过滤推荐中的广告视频' },
     hideActivityBanner: { value: true, name: '隐藏活动横幅', desc: '移除下方活动横幅' },
     hideCommentTopic: { value: false, name: '简化评论区', desc: '隐藏评论区顶部活动/话题引导' },
+    enlargeMiniPlayer: { value: true, name: '小窗播放器放大', desc: '滚动时固定的小窗播放器放大，宽度与推荐列表一致' },
   },
   space: {
     batchOperation: { value: true, name: '批量操作增强', desc: '收藏夹增加批量选择/删除' },

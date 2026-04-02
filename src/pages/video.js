@@ -40,6 +40,19 @@ const commentCss = `
   }
 `;
 
+const miniPlayerCss = `
+  .bpx-player-container[data-screen="mini"] {
+    width: 411px !important;
+    height: 231px !important;
+    bottom: 16px !important;
+  }
+  .bpx-player-container[data-screen="mini"] .bpx-player-video-area,
+  .bpx-player-container[data-screen="mini"] .bpx-player-mini-warp {
+    width: 411px !important;
+    height: 231px !important;
+  }
+`;
+
 const rules = [
   {
     key: 'hidePlayerAd',
@@ -68,6 +81,12 @@ const rules = [
     type: 'css',
     css: commentCss,
     styleId: 'bili-opt-video-comment',
+  },
+  {
+    key: 'enlargeMiniPlayer',
+    type: 'css',
+    css: miniPlayerCss,
+    styleId: 'bili-opt-video-mini-player',
   },
 ];
 
