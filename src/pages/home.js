@@ -3,21 +3,7 @@ import { removeElements } from '../utils/dom.js';
 import { log } from '../utils/logger.js';
 
 const homeCss = `
-  /* 顶部横幅广告 */
-  .bili-header__banner,
-  #bili-header-banner-img,
-  .header-banner__inner,
-  .animated-banner {
-    display: none !important;
-  }
-
-  /* 推荐信息流中的轮播广告 */
-  .recommended-swipe,
-  .recommended-swipe[data-loc-id] {
-    display: none !important;
-  }
-
-  /* 首页轮播广告（recommended-swipe） */
+  /* 首页推荐信息流轮播广告 */
   .recommended-swipe,
   .recommended-swipe[data-loc-id],
   .carousel-item[href*="cm.bilibili.com"],

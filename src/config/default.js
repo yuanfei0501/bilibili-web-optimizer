@@ -3,7 +3,7 @@ const defaults = {
     debug: { value: false, name: '调试模式', desc: '在控制台输出详细日志' },
   },
   home: {
-    hideBannerAd: { value: true, name: '隐藏横幅广告', desc: '移除顶部 banner 广告' },
+    hideBannerAd: { value: true, name: '隐藏轮播广告', desc: '移除首页推荐信息流中的轮播广告' },
     hideSponsor: { value: true, name: '隐藏推广内容', desc: '移除推广/sponsor 内容' },
     hideLiveRecommend: { value: false, name: '隐藏直播推荐', desc: '移除推荐中的直播模块' },
     hideBangumiRecommend: { value: false, name: '隐藏番剧推荐', desc: '移除推荐中的番剧模块' },
