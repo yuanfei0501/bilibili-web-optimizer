@@ -6,9 +6,8 @@
 // @description  净化 B站 web 端页面体验 - 隐藏广告、推广、简化界面，可視化配置
 // @description:en  Clean up Bilibili web experience - hide ads, promotions, simplify UI with visual config
 // @author       yuanfei0501
+// @icon         https://www.bilibili.com/favicon.ico
 // @match        *://www.bilibili.com/*
-// @match        *://search.bilibili.com/*
-// @match        *://space.bilibili.com/*
 // @match        *://t.bilibili.com/*
 // @grant        GM_setValue
 // @grant        GM_getValue
@@ -30,11 +29,8 @@
       debug: { value: false, name: '调试模式', desc: '在控制台输出详细日志' },
     },
     home: {
-      hideBannerAd: { value: true, name: '隐藏轮播广告', desc: '移除首页推荐信息流中的轮播广告' },
-      hideSponsor: { value: true, name: '隐藏推广内容', desc: '移除推广/sponsor 内容' },
-      hideLiveRecommend: { value: false, name: '隐藏直播推荐', desc: '移除推荐中的直播模块' },
-      hideBangumiRecommend: { value: false, name: '隐藏番剧推荐', desc: '移除推荐中的番剧模块' },
-      hideSidebarPopup: { value: true, name: '隐藏侧边栏活动浮窗', desc: '移除右侧活动弹窗' },
+      hideBannerAd: { value: true, name: '隐藏轮播广告', desc: '仅隐藏首页轮播广告' },
+      hideTaggedContent: { value: true, name: '隐藏带标签广告', desc: '隐藏首页中番剧、直播、推广等带标签的广告内容' },
     },
     video: {
       hidePlayerAd: { value: true, name: '隐藏播放器广告', desc: '移除播放器内广告/弹窗' },
@@ -42,17 +38,6 @@
       hideActivityBanner: { value: true, name: '隐藏活动横幅', desc: '移除下方活动横幅' },
       hideCommentTopic: { value: false, name: '简化评论区', desc: '隐藏评论区顶部活动/话题引导' },
       enlargeMiniPlayer: { value: true, name: '小窗播放器放大', desc: '滚动时固定的小窗播放器放大，宽度与推荐列表一致' },
-    },
-    space: {
-      batchOperation: { value: true, name: '批量操作增强', desc: '收藏夹增加批量选择/删除' },
-      markInvalid: { value: true, name: '标记失效视频', desc: '高亮显示已失效视频' },
-      hideUnnecessaryModules: { value: false, name: '精简个人空间', desc: '隐藏不必要模块' },
-    },
-    search: {
-      hideSearchAd: { value: true, name: '隐藏搜索广告', desc: '移除搜索结果中的广告' },
-      filterLive: { value: false, name: '过滤直播结果', desc: '隐藏搜索中的直播类型' },
-      filterBangumi: { value: false, name: '过滤番剧结果', desc: '隐藏搜索中的番剧类型' },
-      filterUser: { value: false, name: '过滤用户结果', desc: '隐藏搜索中的用户类型' },
     },
     dynamic: {
       widenContent: { value: true, name: '动态页加宽', desc: '加宽动态页主内容区域' },
@@ -205,30 +190,6 @@
   /**
    * 等待指定选择器的元素出现
    */
-  function waitForElement(selector, timeout = 10000) {
-    return new Promise((resolve) => {
-      const el = document.querySelector(selector);
-      if (el) return resolve(el);
-
-      const observer = new MutationObserver(() => {
-        const el = document.querySelector(selector);
-        if (el) {
-          observer.disconnect();
-          resolve(el);
-        }
-      });
-
-      observer.observe(document.documentElement, {
-        childList: true,
-        subtree: true,
-      });
-
-      setTimeout(() => {
-        observer.disconnect();
-        resolve(null);
-      }, timeout);
-    });
-  }
 
   /**
    * 批量移除匹配选择器的元素
@@ -310,14 +271,13 @@
     purifier: purifier
   });
 
-  const homeCss = `
-  /* 隐藏轮播广告 */
+  // 仅隐藏轮播广告 + 修复 grid 布局
+  const bannerCss = `
   .recommended-swipe,
   .recommended-swipe[data-loc-id] {
     display: none !important;
   }
 
-  /* 修复隐藏轮播后 grid 布局错位：重置所有卡片为自动排列 + 统一 margin */
   .container.is-version8 > .feed-card,
   .container.is-version8 > .floor-single-card,
   .container.is-version8 > .bili-video-card,
@@ -327,13 +287,31 @@
     grid-row: auto !important;
     margin-top: 0 !important;
   }
+`;
 
-  /* 推荐信息流中的广告/推广 */
+  // 隐藏带标签的广告内容：推广、直播、番剧、侧边栏活动浮窗
+  const taggedContentCss = `
+  /* 推广/广告卡 */
   .feed-card:has(.bili-video-card__info--ad),
   .bili-video-card:has(.bili-video-card__info--ad),
   .feed-card:has([class*="sponsor"]),
   .floor-single-card:has([class*="ad"]),
   .recommend-list__item:has(.bili-video-card__info--ad) {
+    display: none !important;
+  }
+
+  /* 直播推荐 */
+  .feed-card:has(.bili-video-card__info--live),
+  .bili-live-card,
+  [class*="live-recommend"],
+  .feed-card:has([data-report="live"]) {
+    display: none !important;
+  }
+
+  /* 番剧推荐 */
+  .feed-card:has(.bili-video-card__info--bangumi),
+  [class*="bangumi-recommend"],
+  .feed-card:has([data-report="bangumi"]) {
     display: none !important;
   }
 
@@ -345,62 +323,23 @@
   }
 `;
 
-  const liveCss = `
-  .feed-card:has(.bili-video-card__info--live),
-  .bili-live-card,
-  [class*="live-recommend"],
-  .feed-card:has([data-report="live"]) {
-    display: none !important;
-  }
-`;
-
-  const bangumiCss = `
-  .feed-card:has(.bili-video-card__info--bangumi),
-  [class*="bangumi-recommend"],
-  .feed-card:has([data-report="bangumi"]) {
-    display: none !important;
-  }
-`;
-
-  const rules$4 = [
+  const rules$2 = [
     {
       key: 'hideBannerAd',
       type: 'css',
-      css: homeCss,
+      css: bannerCss,
       styleId: 'bili-opt-home-banner',
     },
     {
-      key: 'hideSponsor',
+      key: 'hideTaggedContent',
       type: 'css',
-      css: '',
-      styleId: 'bili-opt-home-sponsor',
-      handler() {
-        const count = removeElements('.bili-video-card__info--ad');
-        if (count > 0) log('首页移除了 ' + count + ' 个推广内容');
-      },
-    },
-    {
-      key: 'hideLiveRecommend',
-      type: 'css',
-      css: liveCss,
-      styleId: 'bili-opt-home-live',
-    },
-    {
-      key: 'hideBangumiRecommend',
-      type: 'css',
-      css: bangumiCss,
-      styleId: 'bili-opt-home-bangumi',
-    },
-    {
-      key: 'hideSidebarPopup',
-      type: 'css',
-      css: '',
-      styleId: 'bili-opt-home-sidebar',
+      css: taggedContentCss,
+      styleId: 'bili-opt-home-tagged',
     },
   ];
 
   function initHomePage() {
-    purifier.register('home', rules$4);
+    purifier.register('home', rules$2);
   }
 
   const videoCss = `
@@ -454,7 +393,7 @@
   }
 `;
 
-  const rules$3 = [
+  const rules$1 = [
     {
       key: 'hidePlayerAd',
       type: 'css',
@@ -492,252 +431,7 @@
   ];
 
   function initVideoPage() {
-    purifier.register('video', rules$3);
-  }
-
-  const spaceCss = `
-  .space-between .section,
-  .space-right .section-video + .section,
-  .s-space .col-2 .section:last-child {
-    display: none !important;
-  }
-
-  .bili-opt-invalid {
-    opacity: 0.5;
-    position: relative;
-  }
-  .bili-opt-invalid::after {
-    content: '已失效';
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    background: #fb7299;
-    color: #fff;
-    font-size: 12px;
-    padding: 2px 6px;
-    border-radius: 4px;
-  }
-`;
-
-  const batchCss = `
-  .bili-opt-batch-bar {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    padding: 8px 16px;
-    background: #f4f5f7;
-    border-radius: 8px;
-    margin-bottom: 12px;
-  }
-  .bili-opt-batch-bar button {
-    padding: 6px 16px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 13px;
-    transition: all 0.2s;
-  }
-  .bili-opt-btn-select { background: #00a1d6; color: #fff; }
-  .bili-opt-btn-select:hover { background: #00b5e5; }
-  .bili-opt-btn-delete { background: #fb7299; color: #fff; }
-  .bili-opt-btn-delete:hover { background: #fc8bab; }
-  .bili-opt-btn-cancel { background: #e3e5e7; color: #333; }
-  .bili-opt-selected { outline: 3px solid #00a1d6; outline-offset: -3px; }
-`;
-
-  const rules$2 = [
-    {
-      key: 'batchOperation',
-      type: 'dom',
-      handler() { injectBatchBar(); },
-    },
-    {
-      key: 'markInvalid',
-      type: 'css',
-      css: spaceCss + batchCss,
-      styleId: 'bili-opt-space',
-      handler() { markInvalidVideos(); },
-    },
-    {
-      key: 'hideUnnecessaryModules',
-      type: 'css',
-      css: '',
-      styleId: 'bili-opt-space-modules',
-    },
-  ];
-
-  let batchMode = false;
-  const selectedItems = new Set();
-
-  async function injectBatchBar() {
-    const container = await waitForElement('.fav-video-list, .favlist-main .fav-video-list', 5000);
-    if (!container) return;
-    if (document.querySelector('.bili-opt-batch-bar')) return;
-
-    const bar = document.createElement('div');
-    bar.className = 'bili-opt-batch-bar';
-
-    const toggleBtn = document.createElement('button');
-    toggleBtn.className = 'bili-opt-btn-select';
-    toggleBtn.id = 'bili-opt-toggle-batch';
-    toggleBtn.textContent = '开启批量选择';
-
-    const deleteBtn = document.createElement('button');
-    deleteBtn.className = 'bili-opt-btn-delete';
-    deleteBtn.id = 'bili-opt-delete-selected';
-    deleteBtn.style.display = 'none';
-    deleteBtn.textContent = '删除选中';
-
-    const cancelBtn = document.createElement('button');
-    cancelBtn.className = 'bili-opt-btn-cancel';
-    cancelBtn.id = 'bili-opt-cancel-batch';
-    cancelBtn.style.display = 'none';
-    cancelBtn.textContent = '取消';
-
-    const countSpan = document.createElement('span');
-    countSpan.className = 'bili-opt-count';
-    countSpan.style.cssText = 'display:none;font-size:13px;color:#999;';
-    const countB = document.createElement('b');
-    countB.textContent = '0';
-    countSpan.appendChild(document.createTextNode('已选择 '));
-    countSpan.appendChild(countB);
-    countSpan.appendChild(document.createTextNode(' 项'));
-
-    bar.appendChild(toggleBtn);
-    bar.appendChild(deleteBtn);
-    bar.appendChild(cancelBtn);
-    bar.appendChild(countSpan);
-
-    container.parentElement.insertBefore(bar, container);
-
-    toggleBtn.addEventListener('click', () => {
-      batchMode = !batchMode;
-      toggleBatchMode(container);
-    });
-
-    deleteBtn.addEventListener('click', () => {
-      if (selectedItems.size === 0) return;
-      if (confirm('确定删除选中的 ' + selectedItems.size + ' 个视频？')) {
-        deleteSelectedItems();
-      }
-    });
-
-    cancelBtn.addEventListener('click', () => {
-      batchMode = false;
-      toggleBatchMode(container);
-    });
-
-    log('收藏夹批量操作栏已注入');
-  }
-
-  function toggleBatchMode(container) {
-    const toggleBtn = document.getElementById('bili-opt-toggle-batch');
-    const deleteBtn = document.getElementById('bili-opt-delete-selected');
-    const cancelBtn = document.getElementById('bili-opt-cancel-batch');
-    const countSpan = document.querySelector('.bili-opt-count');
-
-    if (batchMode) {
-      toggleBtn.textContent = '全选';
-      deleteBtn.style.display = '';
-      cancelBtn.style.display = '';
-      countSpan.style.display = '';
-      container.querySelectorAll('.fav-video-item, .video-list-item').forEach((item) => {
-        item.style.cursor = 'pointer';
-        item.addEventListener('click', onItemToggle);
-      });
-    } else {
-      toggleBtn.textContent = '开启批量选择';
-      deleteBtn.style.display = 'none';
-      cancelBtn.style.display = 'none';
-      countSpan.style.display = 'none';
-      selectedItems.clear();
-      container.querySelectorAll('.bili-opt-selected').forEach((el) => el.classList.remove('bili-opt-selected'));
-      container.querySelectorAll('.fav-video-item, .video-list-item').forEach((item) => {
-        item.style.cursor = '';
-        item.removeEventListener('click', onItemToggle);
-      });
-    }
-  }
-
-  function onItemToggle(e) {
-    if (!batchMode) return;
-    const item = e.currentTarget;
-    if (selectedItems.has(item)) {
-      selectedItems.delete(item);
-      item.classList.remove('bili-opt-selected');
-    } else {
-      selectedItems.add(item);
-      item.classList.add('bili-opt-selected');
-    }
-    updateCount();
-  }
-
-  function updateCount() {
-    const countEl = document.querySelector('.bili-opt-count b');
-    if (countEl) countEl.textContent = String(selectedItems.size);
-  }
-
-  function deleteSelectedItems() {
-    selectedItems.forEach((item) => {
-      const delBtn = item.querySelector('.fav-delete, [title="删除"]');
-      if (delBtn) delBtn.click();
-    });
-    selectedItems.clear();
-    updateCount();
-    log('批量删除完成');
-  }
-
-  function markInvalidVideos() {
-    document.querySelectorAll('.fav-video-item, .video-list-item').forEach((item) => {
-      const invalid = item.querySelector('.invalid, [class*="invalid"], .fav-invalid');
-      const text = item.textContent || '';
-      if (invalid || text.includes('已失效') || text.includes('失效')) {
-        item.classList.add('bili-opt-invalid');
-      }
-    });
-    log('失效视频标记完成');
-  }
-
-  function initSpacePage() {
-    purifier.register('space', rules$2);
-  }
-
-  const searchCss = `
-  .video-list-item:has(.bili-video-card__info--ad),
-  .search-result-list .video-list-item:has([class*="ad"]),
-  [class*="search-ad"],
-  .bili-video-card:has(.bili-video-card__info--ad) {
-    display: none !important;
-  }
-
-  .video-list-item:has(.bili-live-card),
-  .search-page-live,
-  [data-type="live"] {
-    display: none !important;
-  }
-
-  .video-list-item:has(.bili-bangumi-card),
-  .search-page-bangumi,
-  [data-type="bangumi"] {
-    display: none !important;
-  }
-
-  .video-list-item:has(.bili-user-card),
-  .search-page-user,
-  [data-type="user"] {
-    display: none !important;
-  }
-`;
-
-  const rules$1 = [
-    { key: 'hideSearchAd', type: 'css', css: searchCss, styleId: 'bili-opt-search-ad' },
-    { key: 'filterLive', type: 'css', css: '', styleId: 'bili-opt-search-live' },
-    { key: 'filterBangumi', type: 'css', css: '', styleId: 'bili-opt-search-bangumi' },
-    { key: 'filterUser', type: 'css', css: '', styleId: 'bili-opt-search-user' },
-  ];
-
-  function initSearchPage() {
-    purifier.register('search', rules$1);
+    purifier.register('video', rules$1);
   }
 
   const dynamicCss = `
@@ -775,15 +469,18 @@
     z-index: 2147483647;
     display: flex;
     justify-content: flex-start;
+    transition: opacity 0.3s ease;
+  }
+
+  .overlay.peeking {
+    opacity: 0.03;
   }
 
   .panel {
     width: 340px;
     max-width: 90vw;
     height: 100vh;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: #fff;
     color: #333;
     display: flex;
     flex-direction: column;
@@ -807,16 +504,26 @@
     color: #222;
   }
 
-  .panel-close {
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .eye-btn, .panel-close {
     background: none;
     border: none;
     color: #999;
-    font-size: 20px;
+    font-size: 18px;
     cursor: pointer;
     padding: 4px 8px;
     border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  .panel-close:hover { background: rgba(0, 0, 0, 0.06); color: #333; }
+  .eye-btn:hover, .panel-close:hover { background: rgba(0, 0, 0, 0.06); color: #333; }
+  .eye-btn svg { width: 18px; height: 18px; }
 
   .tabs {
     display: flex;
@@ -895,12 +602,30 @@
     { key: 'general', name: '通用' },
     { key: 'home', name: '首页' },
     { key: 'video', name: '播放页' },
-    { key: 'space', name: '收藏' },
-    { key: 'search', name: '搜索' },
     { key: 'dynamic', name: '动态' },
   ];
 
   let panelHost = null;
+
+  function createEyeSvg() {
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('fill', 'none');
+    svg.setAttribute('stroke', 'currentColor');
+    svg.setAttribute('stroke-width', '2');
+    svg.setAttribute('stroke-linecap', 'round');
+    svg.setAttribute('stroke-linejoin', 'round');
+    const path = document.createElementNS(ns, 'path');
+    path.setAttribute('d', 'M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z');
+    const circle = document.createElementNS(ns, 'circle');
+    circle.setAttribute('cx', '12');
+    circle.setAttribute('cy', '12');
+    circle.setAttribute('r', '3');
+    svg.appendChild(path);
+    svg.appendChild(circle);
+    return svg;
+  }
 
   function openPanel() {
     if (panelHost) { closePanel(); return; }
@@ -923,12 +648,21 @@
     header.className = 'panel-header';
     const title = document.createElement('span');
     title.textContent = 'B站优化设置';
+    const actions = document.createElement('div');
+    actions.className = 'header-actions';
+    // 小眼睛按钮 - 悬停隐藏面板以便查看页面效果
+    const eyeBtn = document.createElement('button');
+    eyeBtn.className = 'eye-btn';
+    eyeBtn.title = '悬停查看页面效果';
+    eyeBtn.appendChild(createEyeSvg());
     const closeBtn = document.createElement('button');
     closeBtn.className = 'panel-close';
     closeBtn.id = 'bili-opt-close';
     closeBtn.textContent = '\u00d7';
+    actions.appendChild(eyeBtn);
+    actions.appendChild(closeBtn);
     header.appendChild(title);
-    header.appendChild(closeBtn);
+    header.appendChild(actions);
 
     // Tabs
     const tabs = document.createElement('div');
@@ -970,7 +704,7 @@
     shadow.appendChild(overlay);
 
     document.body.appendChild(panelHost);
-    bindEvents(shadow);
+    bindEvents(shadow, overlay, eyeBtn);
     log('配置面板已打开');
   }
 
@@ -1026,11 +760,19 @@
     }
   }
 
-  function bindEvents(shadow) {
+  function bindEvents(shadow, overlay, eyeBtn) {
     shadow.getElementById('bili-opt-close').addEventListener('click', closePanel);
 
     shadow.querySelector('.overlay').addEventListener('click', (e) => {
       if (e.target.classList.contains('overlay')) closePanel();
+    });
+
+    // 小眼睛 peek 功能：悬停时面板变透明，方便查看页面效果
+    eyeBtn.addEventListener('mouseenter', () => {
+      overlay.classList.add('peeking');
+    });
+    eyeBtn.addEventListener('mouseleave', () => {
+      overlay.classList.remove('peeking');
     });
 
     shadow.querySelectorAll('.tab').forEach((tab) => {
@@ -1074,8 +816,6 @@
   const ROUTES = [
     { key: 'home', pattern: /^https?:\/\/www\.bilibili\.com\/?$/, init: initHomePage },
     { key: 'video', pattern: /^https?:\/\/www\.bilibili\.com\/video\//, init: initVideoPage },
-    { key: 'space', pattern: /^https?:\/\/space\.bilibili\.com\//, init: initSpacePage },
-    { key: 'search', pattern: /^https?:\/\/search\.bilibili\.com\//, init: initSearchPage },
     { key: 'dynamic', pattern: /^https?:\/\/t\.bilibili\.com/, init: initDynamicPage },
   ];
 
@@ -1085,6 +825,62 @@
       if (route.pattern.test(url)) return route;
     }
     return null;
+  }
+
+  function createGearSvg() {
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    const path = document.createElementNS(ns, 'path');
+    path.setAttribute('d', 'M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.49.49 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96a.49.49 0 00-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.07.62-.07.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6A3.6 3.6 0 1112 8.4a3.6 3.6 0 010 7.2z');
+    svg.appendChild(path);
+    return svg;
+  }
+
+  function injectFloatingButton() {
+    const host = document.createElement('div');
+    host.id = 'bili-opt-float-btn';
+    const shadow = host.attachShadow({ mode: 'closed' });
+
+    const style = document.createElement('style');
+    style.textContent = `
+    .float-btn {
+      position: fixed;
+      bottom: 80px;
+      left: 16px;
+      width: 40px;
+      height: 40px;
+      background: #fb7299;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(251, 114, 153, 0.4);
+      transition: all 0.3s;
+      z-index: 99999;
+    }
+    .float-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 16px rgba(251, 114, 153, 0.6);
+    }
+    .float-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: #fff;
+    }
+  `;
+
+    const btn = document.createElement('div');
+    btn.className = 'float-btn';
+    btn.title = 'B站优化设置';
+    btn.appendChild(createGearSvg());
+    btn.addEventListener('click', openPanel);
+
+    shadow.appendChild(style);
+    shadow.appendChild(btn);
+    document.body.appendChild(host);
+    log('浮动设置按钮已注入');
   }
 
   async function main() {
@@ -1103,6 +899,8 @@
     page.init();
     observer.start();
     await purifier.purify(page.key);
+
+    injectFloatingButton();
 
     // 监听 SPA 路由变化
     let lastUrl = location.href;

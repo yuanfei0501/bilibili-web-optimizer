@@ -7,12 +7,30 @@ const TABS = [
   { key: 'general', name: '通用' },
   { key: 'home', name: '首页' },
   { key: 'video', name: '播放页' },
-  { key: 'space', name: '收藏' },
-  { key: 'search', name: '搜索' },
   { key: 'dynamic', name: '动态' },
 ];
 
 let panelHost = null;
+
+function createEyeSvg() {
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('fill', 'none');
+  svg.setAttribute('stroke', 'currentColor');
+  svg.setAttribute('stroke-width', '2');
+  svg.setAttribute('stroke-linecap', 'round');
+  svg.setAttribute('stroke-linejoin', 'round');
+  const path = document.createElementNS(ns, 'path');
+  path.setAttribute('d', 'M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z');
+  const circle = document.createElementNS(ns, 'circle');
+  circle.setAttribute('cx', '12');
+  circle.setAttribute('cy', '12');
+  circle.setAttribute('r', '3');
+  svg.appendChild(path);
+  svg.appendChild(circle);
+  return svg;
+}
 
 export function openPanel() {
   if (panelHost) { closePanel(); return; }
@@ -35,12 +53,21 @@ export function openPanel() {
   header.className = 'panel-header';
   const title = document.createElement('span');
   title.textContent = 'B站优化设置';
+  const actions = document.createElement('div');
+  actions.className = 'header-actions';
+  // 小眼睛按钮 - 悬停隐藏面板以便查看页面效果
+  const eyeBtn = document.createElement('button');
+  eyeBtn.className = 'eye-btn';
+  eyeBtn.title = '悬停查看页面效果';
+  eyeBtn.appendChild(createEyeSvg());
   const closeBtn = document.createElement('button');
   closeBtn.className = 'panel-close';
   closeBtn.id = 'bili-opt-close';
   closeBtn.textContent = '\u00d7';
+  actions.appendChild(eyeBtn);
+  actions.appendChild(closeBtn);
   header.appendChild(title);
-  header.appendChild(closeBtn);
+  header.appendChild(actions);
 
   // Tabs
   const tabs = document.createElement('div');
@@ -82,7 +109,7 @@ export function openPanel() {
   shadow.appendChild(overlay);
 
   document.body.appendChild(panelHost);
-  bindEvents(shadow);
+  bindEvents(shadow, overlay, eyeBtn);
   log('配置面板已打开');
 }
 
@@ -138,11 +165,19 @@ function buildSettingItems(page, config, container) {
   }
 }
 
-function bindEvents(shadow) {
+function bindEvents(shadow, overlay, eyeBtn) {
   shadow.getElementById('bili-opt-close').addEventListener('click', closePanel);
 
   shadow.querySelector('.overlay').addEventListener('click', (e) => {
     if (e.target.classList.contains('overlay')) closePanel();
+  });
+
+  // 小眼睛 peek 功能：悬停时面板变透明，方便查看页面效果
+  eyeBtn.addEventListener('mouseenter', () => {
+    overlay.classList.add('peeking');
+  });
+  eyeBtn.addEventListener('mouseleave', () => {
+    overlay.classList.remove('peeking');
   });
 
   shadow.querySelectorAll('.tab').forEach((tab) => {

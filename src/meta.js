@@ -6,9 +6,8 @@ export const userscriptMeta = `// ==UserScript==
 // @description  净化 B站 web 端页面体验 - 隐藏广告、推广、简化界面，可視化配置
 // @description:en  Clean up Bilibili web experience - hide ads, promotions, simplify UI with visual config
 // @author       yuanfei0501
+// @icon         https://www.bilibili.com/favicon.ico
 // @match        *://www.bilibili.com/*
-// @match        *://search.bilibili.com/*
-// @match        *://space.bilibili.com/*
 // @match        *://t.bilibili.com/*
 // @grant        GM_setValue
 // @grant        GM_getValue

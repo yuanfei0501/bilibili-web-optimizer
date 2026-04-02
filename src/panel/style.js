@@ -12,15 +12,18 @@ export const panelCSS = `
     z-index: 2147483647;
     display: flex;
     justify-content: flex-start;
+    transition: opacity 0.3s ease;
+  }
+
+  .overlay.peeking {
+    opacity: 0.03;
   }
 
   .panel {
     width: 340px;
     max-width: 90vw;
     height: 100vh;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: #fff;
     color: #333;
     display: flex;
     flex-direction: column;
@@ -44,16 +47,26 @@ export const panelCSS = `
     color: #222;
   }
 
-  .panel-close {
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .eye-btn, .panel-close {
     background: none;
     border: none;
     color: #999;
-    font-size: 20px;
+    font-size: 18px;
     cursor: pointer;
     padding: 4px 8px;
     border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-  .panel-close:hover { background: rgba(0, 0, 0, 0.06); color: #333; }
+  .eye-btn:hover, .panel-close:hover { background: rgba(0, 0, 0, 0.06); color: #333; }
+  .eye-btn svg { width: 18px; height: 18px; }
 
   .tabs {
     display: flex;
