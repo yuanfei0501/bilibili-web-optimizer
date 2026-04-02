@@ -5,6 +5,7 @@ import { log } from '../utils/logger.js';
 const videoCss = `
   /* 推荐列表中的广告卡 */
   .video-card-ad-small,
+  .video-card-ad-small-inner,
   .slide-ad-exp {
     display: none !important;
   }
@@ -12,6 +13,12 @@ const videoCss = `
   /* 右下角横幅广告 */
   .right-bottom-banner,
   .ad-floor-exp {
+    display: none !important;
+  }
+
+  /* 播放器左侧/右侧条形广告 */
+  .strip-ad,
+  .left-banner {
     display: none !important;
   }
 
