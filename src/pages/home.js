@@ -11,6 +11,20 @@ const homeCss = `
     display: none !important;
   }
 
+  /* 推荐信息流中的轮播广告 */
+  .recommended-swipe,
+  .recommended-swipe[data-loc-id] {
+    display: none !important;
+  }
+
+  /* 首页轮播广告（recommended-swipe） */
+  .recommended-swipe,
+  .recommended-swipe[data-loc-id],
+  .carousel-item[href*="cm.bilibili.com"],
+  .carousel-item:has(img.icon[src*="eva.png"]) {
+    display: none !important;
+  }
+
   /* 推荐信息流中的广告/推广 */
   .feed-card:has(.bili-video-card__info--ad),
   .bili-video-card:has(.bili-video-card__info--ad),
