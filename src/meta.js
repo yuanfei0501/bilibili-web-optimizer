@@ -2,7 +2,7 @@ export const userscriptMeta = `// ==UserScript==
 // @name         B站优化
 // @name:en      Bilibili Optimizer
 // @namespace    https://github.com/yuanfei0501/bilibili-web-optimizer
-// @version      0.1.0
+// @version      0.2.0
 // @description  净化 B站 web 端页面体验 - 隐藏广告、推广、简化界面，可視化配置
 // @description:en  Clean up Bilibili web experience - hide ads, promotions, simplify UI with visual config
 // @author       yuanfei0501
