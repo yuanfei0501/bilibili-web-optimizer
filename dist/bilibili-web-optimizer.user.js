@@ -1,6 +1,6 @@
 // ==UserScript==
-// @name         B站 Web 优化
-// @name:en      Bilibili Web Optimizer
+// @name         B站优化
+// @name:en      Bilibili Optimizer
 // @namespace    https://github.com/yuanfei0501/bilibili-web-optimizer
 // @version      0.1.0
 // @description  净化 B站 web 端页面体验 - 隐藏广告、推广、简化界面，可視化配置
