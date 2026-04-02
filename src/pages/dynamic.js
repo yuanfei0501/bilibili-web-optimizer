@@ -1,16 +1,16 @@
 import { purifier } from '../core/purifier.js';
 
 const dynamicCss = `
-  /* 动态页主内容区加宽 */
+  /* 动态页主内容区适度加宽，不完全填满 */
   .bili-dyn-home--member > main {
-    flex-grow: 1 !important;
-    min-width: 0 !important;
+    flex: 1 1 0% !important;
+    max-width: 960px !important;
   }
 `;
 
 const rules = [
   {
-    key: 'hideBannerAd',
+    key: 'widenContent',
     type: 'css',
     css: dynamicCss,
     styleId: 'bili-opt-dynamic-width',
