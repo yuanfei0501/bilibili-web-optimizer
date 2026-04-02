@@ -3,22 +3,22 @@ import { removeElements } from '../utils/dom.js';
 import { log } from '../utils/logger.js';
 
 const videoCss = `
+  /* 推荐列表中的广告卡 */
+  .video-card-ad-small,
+  .slide-ad-exp {
+    display: none !important;
+  }
+
+  /* 右下角横幅广告 */
+  .right-bottom-banner,
+  .ad-floor-exp {
+    display: none !important;
+  }
+
+  /* 播放器内推广弹窗 */
+  .bpx-player-promote-wrap,
   .bpx-player-toast-wrap,
-  .bpx-player-ending-panel:has(.bpx-player-ending-related),
-  .bili-player-video-toast-item,
-  .bpx-player-promote-wrap {
-    display: none !important;
-  }
-
-  .recommend-list__item:has(.bili-video-card__info--ad),
-  .rec-list:has(.bili-video-card__info--ad) {
-    display: none !important;
-  }
-
-  .activity-banner-v2,
-  .bili-video-page-activity,
-  [class*="activity-banner"],
-  [class*="operational"] {
+  .bili-player-video-toast-item {
     display: none !important;
   }
 `;
