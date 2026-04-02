@@ -9,13 +9,15 @@ const homeCss = `
     display: none !important;
   }
 
-  /* 修复隐藏轮播后 grid 布局错位：重置所有卡片为自动排列 */
+  /* 修复隐藏轮播后 grid 布局错位：重置所有卡片为自动排列 + 统一 margin */
   .container.is-version8 > .feed-card,
   .container.is-version8 > .floor-single-card,
   .container.is-version8 > .bili-video-card,
+  .container.is-version8 > .bili-feed-card,
   .container.is-version8 > .load-more-anchor {
     grid-column: auto !important;
     grid-row: auto !important;
+    margin-top: 0 !important;
   }
 
   /* 推荐信息流中的广告/推广 */
