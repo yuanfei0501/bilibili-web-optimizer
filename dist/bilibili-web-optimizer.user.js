@@ -814,8 +814,8 @@
   }
 
   const ROUTES = [
-    { key: 'home', pattern: /^https?:\/\/www\.bilibili\.com\/?$/, init: initHomePage },
-    { key: 'video', pattern: /^https?:\/\/www\.bilibili\.com\/video\//, init: initVideoPage },
+    { key: 'home', pattern: /^https?:\/\/www\.bilibili\.com\/?(\?|#|$)/, init: initHomePage },
+    { key: 'video', pattern: /^https?:\/\/www\.bilibili\.com\/(video|list)\//, init: initVideoPage },
     { key: 'dynamic', pattern: /^https?:\/\/t\.bilibili\.com/, init: initDynamicPage },
   ];
 
