@@ -45,6 +45,7 @@ const miniPlayerCss = `
     width: 411px !important;
     height: 231px !important;
     bottom: 16px !important;
+    transform: translateX(-10px) !important;
   }
   .bpx-player-container[data-screen="mini"] .bpx-player-video-area,
   .bpx-player-container[data-screen="mini"] .bpx-player-mini-warp {
